@@ -23,6 +23,8 @@ generate_genesis() {
     # 6 - fulu / osaka
     # 7 - gloas / amsterdam
     # 8 - eip7805 / eip7805
+    # 9 - eip7807/ eip7807
+    # 10 - eip7745 / eip7745
 
     if [ "$CHAIN_ID" == "1" ]; then
         # mainnet shadowfork
@@ -65,6 +67,8 @@ generate_genesis() {
     [ $has_fork -lt 6 ] && [ ! "$FULU_FORK_EPOCH"      == "18446744073709551615" ] && genesis_add_fulu $tmp_dir
     [ $has_fork -lt 7 ] && [ ! "$GLOAS_FORK_EPOCH"     == "18446744073709551615" ] && genesis_add_gloas $tmp_dir
     [ $has_fork -lt 8 ] && [ ! "$EIP7805_FORK_EPOCH"   == "18446744073709551615" ] && genesis_add_eip7805 $tmp_dir
+    [ $has_fork -lt 9 ] && [ ! "$EIP7807_FORK_EPOCH"   == "18446744073709551615" ] && genesis_add_eip7807 $tmp_dir
+    [ $has_fork -lt 10 ] && [ ! "$EIP7745_FORK_EPOCH"   == "18446744073709551615" ] && genesis_add_eip7745 $tmp_dir
     genesis_add_bpo $tmp_dir
 
     if [ "$is_shadowfork" == "0" ]; then
@@ -519,6 +523,52 @@ genesis_add_eip7805() {
     # besu.json
     genesis_add_json $tmp_dir/besu.json '.config += {
         "eip7805Time": '"$eip7805_time"'
+    }'
+}
+
+# add eip7807 fork properties
+genesis_add_eip7807() {
+    tmp_dir=$1
+    echo "Adding eip7807 genesis properties"
+    eip7807_time=$(genesis_get_activation_time $EIP7807_FORK_EPOCH)
+    eip7807_time_hex="0x$(printf "%x" $eip7807_time)"
+
+    # genesis.json
+    genesis_add_json $tmp_dir/genesis.json '.config += {
+        "eip7807Time": '"$eip7807_time"'
+    }'
+
+    # chainspec.json
+    genesis_add_json $tmp_dir/chainspec.json '.params += {
+        "eip7807TransitionTimestamp": "'$eip7807_time_hex'"
+    }'
+
+    # besu.json
+    genesis_add_json $tmp_dir/besu.json '.config += {
+        "eip7807Time": '"$eip7807_time"'
+    }'
+}
+
+# add eip7745 fork properties
+genesis_add_eip7745() {
+    tmp_dir=$1
+    echo "Adding eip7745 genesis properties"
+    eip7745_time=$(genesis_get_activation_time $EIP7745_FORK_EPOCH)
+    eip7745_time_hex="0x$(printf "%x" $eip7745_time)"
+
+    # genesis.json
+    genesis_add_json $tmp_dir/genesis.json '.config += {
+        "eip7745Time": '"$eip7745_time"'
+    }'
+
+    # chainspec.json
+    genesis_add_json $tmp_dir/chainspec.json '.params += {
+        "eip7745TransitionTimestamp": "'$eip7745_time_hex'"
+    }'
+
+    # besu.json
+    genesis_add_json $tmp_dir/besu.json '.config += {
+        "eip7745Time": '"$eip7745_time"'
     }'
 }
 
